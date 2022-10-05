@@ -1,6 +1,6 @@
 const Sequelize = require("sequelize");
 //do not need to require mysql2 because it is done internally by sequelize
-const { DataTypes } = Sequelize;
+const { DataTypes, Op } = Sequelize;
 
 //this is the constructor function
 const sequelize = new Sequelize("sequelize-video", "root", "code", {
@@ -90,11 +90,9 @@ Users.sync({ alter: true })
     // }
     // // console.log(user.username);
     // return user.save();
-
     //__________________
     //version 2 to save
     //__________________
-
     // return Users.create({
     //   username: "Micaela",
     //   password: "234",
@@ -104,23 +102,76 @@ Users.sync({ alter: true })
     //__________________
     //version 3 to save
     //__________________
-    return Users.bulkCreate(
-      [
-        {
-          username: "Micaela",
-          password: "234",
-          age: 13,
-          WittCodeRocks: false,
+    // return Users.bulkCreate(
+    //   [
+    //     {
+    //       username: "Micaela",
+    //       password: "234",
+    //       age: 13,
+    //       WittCodeRocks: false,
+    //     },
+    //     {
+    //       username: "Daisy",
+    //       password: "123",
+    //       age: 3,
+    //       WittCodeRocks: true,
+    //     },
+    //   ]
+    // { validate: true } >> use this to validate users created with bulkCreate()
+    // );
+    //_____________
+    // return Users.findAll({ attributes: ["username", "password"] });
+    //return {myName: "Micaela", pwd: '234}
+    //_____________
+    // return Users.findAll({
+    //   attributes: [
+    //     ["username", "myName"],
+    //     ["password", "pwd"],
+    //   ],
+    // });
+    // _____________
+    // returns the sum of all ages
+    // return Users.findAll({
+    //   attributes: [[sequelize.fn("SUM", sequelize.col("age")), "howOld"]],
+    // });
+    // _____________
+    // returns all columns except the password column
+    // return Users.findAll({ attributes: { exclude: ["password"] } });
+    // _____________
+    // returns every user with age of 13
+    // return Users.findAll({ where: { age: 13 } });
+    // _____________
+    // returns usernames for users with an age of 13
+    // return Users.findAll({ attributes: ["username"], where: { age: 13 } });
+    // _____________
+    // returns only 2 users
+    // return Users.findAll({ limit: 2 });
+    // _____________
+    // returns users in descending age order
+    // return Users.findAll({ order: [["age", "DESC"]] });
+    // _____________
+    // returns names with the sum of ages for those names
+    // return Users.findAll({
+    //   attributes: [
+    //     "username",
+    //     [sequelize.fn("SUM", sequelize.col("age")), "sum_age"],
+    //   ],
+    //   group: "username",
+    // });
+    // _____________
+    // returns where either username: "Mica" OR age: 5
+    // return Users.findAll({
+    //   where: { [Op.or]: { username: "Mica", age: 5 } },
+    // });
+    // _____________
+    // returns where age is greater than 5
+    return Users.findAll({
+      where: {
+        age: {
+          [Op.gt]: 5,
         },
-        {
-          username: "Daisy",
-          password: "123",
-          age: 3,
-          WittCodeRocks: true,
-        },
-      ]
-      // { validate: true } >> use this to validate users created with bulkCreate()
-    );
+      },
+    });
   })
   .then((data) => {
     console.log("user added to database");
