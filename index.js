@@ -1,5 +1,6 @@
 const Sequelize = require("sequelize");
 //do not need to require mysql2 because it is done internally by sequelize
+const { DataTypes } = Sequelize;
 
 //this is the constructor function
 const sequelize = new Sequelize("sequelize-video", "root", "code", {
@@ -31,23 +32,26 @@ const Users = sequelize.define(
   "user",
   {
     user_id: {
-      type: Sequelize.DataTypes.INTEGER,
+      type: DataTypes.INTEGER,
       primaryKey: true,
-      autoincrement: true,
+      autoIncrement: true,
     },
     username: {
-      type: Sequelize.DataTypes.STRING,
+      type: DataTypes.STRING,
       allowNull: false,
+      validate: {
+        len: [4, 6],
+      },
     },
     password: {
-      type: Sequelize.DataTypes.STRING,
+      type: DataTypes.STRING,
     },
     age: {
-      type: Sequelize.DataTypes.INTEGER,
+      type: DataTypes.INTEGER,
       defaultValue: 21,
     },
     WittCodeRocks: {
-      type: Sequelize.DataTypes.BOOLEAN,
+      type: DataTypes.BOOLEAN,
       defaultValue: true,
     },
   },
@@ -57,13 +61,86 @@ const Users = sequelize.define(
   }
 );
 
-console.log(sequelize.models.user);
+// console.log(sequelize.models.user);
 
 //alter:true alters the tables. force: true drops and creates a new table
+// Users.sync({ alter: true })
+//   .then((data) => {
+//     console.log("table and model synced successfully");
+//   })
+//   .catch((err) => {
+//     console.log("error syncing table and model");
+//   });
+
 Users.sync({ alter: true })
-  .then((data) => {
-    console.log("table and model synced successfully");
+  .then(() => {
+    //working with our updated table.
+    //__________________
+    //version 1 to save
+    //__________________
+    // const user = Users.build({
+    //   username: "Mica",
+    //   password: "123",
+    //   age: 13,
+    //   WittCodeRocks: true,
+    // });
+    // //can modify object before save()
+    // if (user.age < 75) {
+    //   user.old = true;
+    // }
+    // // console.log(user.username);
+    // return user.save();
+
+    //__________________
+    //version 2 to save
+    //__________________
+
+    // return Users.create({
+    //   username: "Micaela",
+    //   password: "234",
+    //   age: 13,
+    //   WittCodeRocks: false,
+    // });
+    //__________________
+    //version 3 to save
+    //__________________
+    return Users.bulkCreate(
+      [
+        {
+          username: "Micaela",
+          password: "234",
+          age: 13,
+          WittCodeRocks: false,
+        },
+        {
+          username: "Daisy",
+          password: "123",
+          age: 3,
+          WittCodeRocks: true,
+        },
+      ]
+      // { validate: true } >> use this to validate users created with bulkCreate()
+    );
   })
+  .then((data) => {
+    console.log("user added to database");
+    // data.username = "Micaela Chavez";
+    // data.age = 13;
+    // console.log(data.toJSON());
+    // // return data.save(); >>> saves data
+    //return data.destroy  >>> deletes data
+    // return data.reload(); >>> reverts to original data
+    // return data.save({ fields: ["age"] }); >>> saves only the age field (sequelize only updates fields that have changed)
+    // data.decrement({ age: 2 });
+    // data.increment({ age: 2 });
+    data.forEach((el) => {
+      console.log(el.toJSON());
+    });
+  })
+  // .then((data) => {
+  //   console.log("user updated");
+  //   console.log(data.toJSON());
+  // })
   .catch((err) => {
-    console.log("error syncing table and model");
+    console.log(err);
   });
