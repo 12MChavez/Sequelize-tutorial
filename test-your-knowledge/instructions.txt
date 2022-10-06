@@ -1,0 +1,11 @@
+1. Create a table called student: 
+a) student_id >> Integer, Primary Key, Auto Increments
+b) name >> VARCHAR(255), Doesn't Allow Null Values, Validate Name is between length of 4 and 20 characters
+c)favorite_class >> VARCHAR(25), Default Value is Computer Science
+d) school_year >> Integer, Doesn't Allow Null Values
+e) subscribed_to_wittcode > Tiny Int, Default Value is True
+
+2) Bulk create some users with validation
+3) Query the table: 
+a) Retrieve the name of every student whose favorite class is Computer Science or they are subscribed to WittCode
+b) Count the total amount of students in each school year and give the returned column the alias num_students
