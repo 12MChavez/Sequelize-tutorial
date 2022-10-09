@@ -184,14 +184,33 @@ Users.sync({ alter: true })
     //   },
     //   raw: true,
     // });
-    return Users.create({
-      username: "validate",
-      password: "validate",
-      age: 31,
-    });
+    // returns an array of the results and object metadata
+    // return sequelize.query(`UPDATE user SET age = 54 WHERE username = 'Mica'`);
+    // return sequelize.query(`SELECT * FROM user`, {
+    //   type: Sequelize.QueryTypes.SELECT,
+    // });
+    // use replacements to escape input in input forms
+    // return sequelize.query(`SELECT * FROM user WHERE username = :username`, {
+    //   replacements: { username: "Micaela" },
+    // returns a regular object and only 1 object
+    // plain: true,
+    // });
+    // return all users names with names listed in replacements
+    // return sequelize.query(`SELECT * FROM user WHERE username IN(:username)`, {
+    //   replacements: { username: ["Mica", "pizza"] },
+    // });
+    // Use wildcard operators to return users with the replacement usernames in them
+    return sequelize.query(
+      `SELECT * FROM user WHERE username LIKE(:username)`,
+      {
+        replacements: { username: "mi%" },
+      }
+    );
   })
   .then((data) => {
-    console.log(data.toJSON());
+    //deconstruction
+    // [result, metadata] = data;
+    console.log(data);
   })
 
   .catch((err) => {
