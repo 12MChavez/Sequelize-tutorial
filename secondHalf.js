@@ -6,6 +6,7 @@ const bycrypt = require("bcrypt");
 //make things smaller with this
 const zlib = require("zlib");
 const { get } = require("http");
+const { truncateSync } = require("fs");
 
 //this is the constructor function
 const sequelize = new Sequelize("sequelize-video", "root", "code", {
@@ -129,7 +130,7 @@ const Users = sequelize.define(
   },
   {
     freezeTableName: true,
-    timestamps: false,
+    timestamps: true,
     //module validator
     validate: {
       usernamePassMatch() {
@@ -140,6 +141,10 @@ const Users = sequelize.define(
         }
       },
     },
+    //set timestamps to true to have paranoid column work
+    //this sets up a deleted at column
+    paranoid: true,
+    deletedAt: "timeDestroyed",
   }
 );
 
@@ -200,12 +205,21 @@ Users.sync({ alter: true })
     //   replacements: { username: ["Mica", "pizza"] },
     // });
     // Use wildcard operators to return users with the replacement usernames in them
-    return sequelize.query(
-      `SELECT * FROM user WHERE username LIKE(:username)`,
-      {
-        replacements: { username: "mi%" },
-      }
-    );
+    // return sequelize.query(
+    //   `SELECT * FROM user WHERE username LIKE(:username)`,
+    //   {
+    //     replacements: { username: "mi%" },
+    //   }
+    // );
+    // return Users.destroy({
+    //   where: { user_id: 27 },
+    //   //force delete
+    //   force: true,
+    // });
+    // restore deleted user
+    return Users.restore({
+      where: { user_id: 29 },
+    });
   })
   .then((data) => {
     //deconstruction
